@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Ingredient } from '../../shared/ingredient.model';
 import { RecipeService } from '../recipe.service';
@@ -20,7 +20,7 @@ export class RecipeEditComponent implements OnInit {
   ngOnInit() {
     this.route.params
 
-    // "subscribe" to weather or not the user is in Edit mode, and what item is selected
+    // "Subscribe" to weather or not the user is in Edit mode, and what item is selected
       .subscribe(
         (params: Params) => {
           this.id = +params['id'];
@@ -34,6 +34,21 @@ export class RecipeEditComponent implements OnInit {
 
   onSubmit() {
     console.log(this.recipeForm);
+  }
+
+  // add new control to array of controls
+  onAddIngredient() {
+    // Explicity cast
+   (<FormArray>this.recipeForm.get('ingredients')).push(
+     new FormGroup({
+       'name': new FormControl(null, Validators.required),
+       'amount': new FormControl(null, [
+          Validators.required,
+          // validator is that the number is a positive number greater than 0
+          Validators.pattern(/^[1-9]+[0-9]*$/)
+       ])
+     })
+   );
   }
 
   private initForm() {
@@ -58,19 +73,22 @@ export class RecipeEditComponent implements OnInit {
 
             // Makes recipe name and ingredient available to form
             new FormGroup({
-              'name': new FormControl(ingredient.name),
-              'amount': new FormControl(ingredient.amount)
+              'name': new FormControl(ingredient.name, Validators.required),
+              'amount': new FormControl(ingredient.amount, [
+                Validators.required,
+                Validators.pattern(/^[1-9]+[0-9]*$/)
+              ])
             })
-          )
+          );
         }
       }
     }
 
     // Recative Forms implimentation, includes recipeName as default value which can be empty string or name of recipe selected
     this.recipeForm = new FormGroup({
-      'name': new FormControl(recipeName),
-      'imagePath': new FormControl(recipeImagePath),
-      'description': new FormControl(recipeDescription),
+      'name': new FormControl(recipeName, Validators.required),
+      'imagePath': new FormControl(recipeImagePath, Validators.required),
+      'description': new FormControl(recipeDescription, Validators.required),
       'ingredients': recipeIngredients
     });
   }
