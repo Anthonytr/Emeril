@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormArray } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Ingredient } from '../../shared/ingredient.model';
 import { RecipeService } from '../recipe.service';
 
 @Component({
@@ -31,10 +32,15 @@ export class RecipeEditComponent implements OnInit {
       );
   }
 
+  onSubmit() {
+    console.log(this.recipeForm);
+  }
+
   private initForm() {
     let recipeName = '';
     let recipeImagePath = '';
     let recipeDescription = '';
+    let recipeIngredients = new FormArray([]);
 
     // Decides what value should be WHEN in edit mode
     if (this.editMode) {
@@ -42,13 +48,30 @@ export class RecipeEditComponent implements OnInit {
       recipeName = recipe.name;
       recipeImagePath = recipe.imagePath;
       recipeDescription = recipe.description;
+
+      // Figure out if the recipe has any "ingredients"
+      if (recipe['ingredients']) {
+
+        // loop through ingredients and push them to form array
+        for (let ingredient of recipe.ingredients) {
+          recipeIngredients.push(
+
+            // Makes recipe name and ingredient available to form
+            new FormGroup({
+              'name': new FormControl(ingredient.name),
+              'amount': new FormControl(ingredient.amount)
+            })
+          )
+        }
+      }
     }
 
     // Recative Forms implimentation, includes recipeName as default value which can be empty string or name of recipe selected
     this.recipeForm = new FormGroup({
       'name': new FormControl(recipeName),
       'imagePath': new FormControl(recipeImagePath),
-      'description': new FormControl(recipeDescription)
+      'description': new FormControl(recipeDescription),
+      'ingredients': recipeIngredients
     });
   }
 
