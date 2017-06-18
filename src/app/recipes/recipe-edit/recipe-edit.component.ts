@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Ingredient } from '../../shared/ingredient.model';
+import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 
 @Component({
@@ -33,7 +34,18 @@ export class RecipeEditComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.recipeForm);
+    // Typically these need to be defined, but "this.recipeForm.value" is a shortcut
+    // const newRecipe = new Recipe(
+    //  this.recipeForm.value['name'], 
+    //  this.recipeForm.value['description'],
+    //  this.recipeForm.value['imagePath'],
+    //  this.recipeForm.value['ingredients']);
+
+    if (this.editMode) {
+      this.recipeService.updateRecipe(this.id, this.recipeForm.value);
+    } else {
+      this.recipeService.addRecipe(this.recipeForm.value);
+    }
   }
 
   // add new control to array of controls
@@ -91,6 +103,7 @@ export class RecipeEditComponent implements OnInit {
       'description': new FormControl(recipeDescription, Validators.required),
       'ingredients': recipeIngredients
     });
+
   }
 
 }
