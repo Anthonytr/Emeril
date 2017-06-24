@@ -3,15 +3,18 @@
   [routerLink]="[index]"
   routerLinkActive="active"
   class="list-group-item clearfix">
-  <div class="pull-left">
-    <h4 class="list-group-item-heading">{{ recipe.name }}</h4>
-    <p class="list-group-item-text">{{ recipe.description }}</p>
-  </div>
-  <span class="pull-right">
-        <img
+
+  <div class="row">
+    <div class="col-sm-8">
+      <h4 class="list-group-item-heading">{{ recipe.name }}</h4>
+      <p class="list-group-item-text">{{ recipe.description }}</p>
+    </div>
+
+    <div class="col-sm-4">
+      <img
           [src]="recipe.imagePath"
           alt="{{ recipe.name }}"
-          class="img-responsive"
-          style="max-height: 50px;">
-      </span>
+          class="img-responsive">
+    </div>
+  </div>
 </a>
